@@ -1,50 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import TableLForm from './components/TableForm/TableLForm';
-import TableLList from './components/TableList/TableList';
-
+import ProductList from './components/ProductList/ProductList';
+import ProductForm from './components/ProductForm/ProductForm';
 function App() {
-  const [orders, setOrders] = useState({});
+    const [products, setProducts] = useState({});
 
-  const fetchOrdersFromLocalStorage = () => {
-    const storedOrders = {};
-    Object.keys(localStorage).forEach((key) => {
-      if (key !== 'orders') {
-        storedOrders[key] = JSON.parse(localStorage.getItem(key));
-      }
-    });
-    return storedOrders;
-  };
-
-  useEffect(() => {
-    const storedOrders = fetchOrdersFromLocalStorage();
-    setOrders(storedOrders);
-  }, []); // Empty dependency array ensures it runs only once on mount
-
-  const handleSubmit = (data) => {
-    const { orderId, selectedTable } = data;
-    const updatedOrders = {
-      ...orders,
-      [orderId]: { ...data, table: selectedTable },
+    const fetchProductsFromLocalStorage = () => {
+        const storedProducts = {};
+        Object.keys(localStorage).forEach((key) => {
+            if (key !== 'products') {
+                storedProducts[key] = JSON.parse(localStorage.getItem(key));
+            }
+        });
+        return storedProducts;
     };
-    setOrders(updatedOrders);
 
-    localStorage.setItem(orderId, JSON.stringify({ ...data, table: selectedTable }));
-  };
+    useEffect(() => {
+        const storedProducts = fetchProductsFromLocalStorage();
+        setProducts(storedProducts);
+    }, []);
 
-  const handleDelete = (orderId) => {
-    const updatedOrders = { ...orders };
-    delete updatedOrders[orderId];
+    const handleSubmit = (data) => {
+        const { productId, category } = data;
+        const updatedProducts = {
+            ...products,
+            [productId]: { ...data, category: category },
+        };
+        setProducts(updatedProducts);
 
-    setOrders(updatedOrders);
-    localStorage.removeItem(orderId);
-  };
+        localStorage.setItem(productId, JSON.stringify({ ...data, category: category }));
+    };
 
-  return (
-    <div className="App">
-      <TableLForm onSubmit={handleSubmit} />
-      <TableLList orders={orders} onDelete={handleDelete} />
-    </div>
-  );
+    const handleDelete = (productId) => {
+        const updatedProducts = { ...products };
+        delete updatedProducts[productId];
+
+        setProducts(updatedProducts);
+        localStorage.removeItem(productId);
+    };
+
+    return (
+        <div className="App">
+            <ProductForm onSubmit={handleSubmit} />
+            <ProductList products={products} onDelete={handleDelete} />
+        </div>
+    );
 }
 
 export default App;
